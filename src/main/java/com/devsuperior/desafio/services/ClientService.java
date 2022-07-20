@@ -3,6 +3,7 @@ package com.devsuperior.desafio.services;
 import com.devsuperior.desafio.dto.ClientDTO;
 import com.devsuperior.desafio.entities.Client;
 import com.devsuperior.desafio.repositories.ClientRepository;
+import com.devsuperior.desafio.services.exceptions.ExceptionBadRequest;
 import com.devsuperior.desafio.services.exceptions.ExceptionEntityNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,13 +47,21 @@ public class ClientService {
     }
 
     @Transactional(readOnly = true)
-    public ClientDTO insert(ClientDTO dto) {
+    public ClientDTO insert(ClientDTO dto) throws ExceptionBadRequest {
         //Converter para o tipo Client
         Client entity = new Client();
+        List<Client> listEntity = clientRepository.findAll();
 
         //removendo pontos e traços do cpf
         dto.setCpf(dto.getCpf().replace(".", ""));
         dto.setCpf(dto.getCpf().replace("-", ""));
+
+        //verificando se existe cpf repetido na base
+        for (Client listFilter : listEntity) {
+            if(dto.getCpf().equals(listFilter.getCpf())) {
+                throw new ExceptionBadRequest("CPF already existing");
+            }
+        }
 
         this.copyDtoToEntity(dto, entity); //método criado para não precisar ficar repetindo a mesma linha de código
 
@@ -63,7 +72,6 @@ public class ClientService {
 
     //Método para setar na base de dados pegando o DTO e convertendo para ENTIDADE
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
-
         entity.setChildren(dto.getChildren());
         entity.setBirthDate(dto.getBirthDate());
         entity.setCpf(dto.getCpf());
