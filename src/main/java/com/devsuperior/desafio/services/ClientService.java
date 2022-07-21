@@ -69,6 +69,24 @@ public class ClientService {
 
         return this.viewBodyEntity(entity);
     }
+    
+	public ClientDTO update(Long id, ClientDTO clientDTO) {
+		
+	try {
+		// Client client = clientRepository.getOne(id); Consta que o getOne isDepracated, portanto utilizei da forma convencional
+		
+		Client client = clientRepository.findById(id).get(); //cria obj provisório para não acessar desnecessariamente a base de dados
+		
+		this.copyDtoToEntity(clientDTO, client);
+		
+		client = clientRepository.save(client);
+		
+		return this.viewBodyEntity(client);
+		
+		} catch (ExceptionEntityNotFound e) {
+			throw new ExceptionEntityNotFound("id not found");
+		}
+	}
 
     //Método para setar na base de dados pegando o DTO e convertendo para ENTIDADE
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
@@ -89,4 +107,6 @@ public class ClientService {
                 entity.getBirthDate(),
                 entity.getChildren());
     }
+
+
 }
