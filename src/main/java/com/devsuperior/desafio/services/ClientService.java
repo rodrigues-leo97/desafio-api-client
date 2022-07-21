@@ -6,6 +6,8 @@ import com.devsuperior.desafio.repositories.ClientRepository;
 import com.devsuperior.desafio.services.exceptions.ExceptionBadRequest;
 import com.devsuperior.desafio.services.exceptions.ExceptionEntityNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,8 @@ public class ClientService {
         return this.viewBodyEntity(entity);
     }
     
+    
+    @Transactional(readOnly = true)
 	public ClientDTO update(Long id, ClientDTO clientDTO) {
 		
 	try {
@@ -78,7 +82,6 @@ public class ClientService {
 		Client client = clientRepository.findById(id).get(); //cria obj provisório para não acessar desnecessariamente a base de dados
 		
 		this.copyDtoToEntity(clientDTO, client);
-		
 		client = clientRepository.save(client);
 		
 		return this.viewBodyEntity(client);
@@ -88,6 +91,17 @@ public class ClientService {
 		}
 	}
 
+    
+    public void delete(Long id) {
+    	try {
+    		clientRepository.deleteById(id);
+    	} catch (EmptyResultDataAccessException e) {
+    		throw new ExceptionEntityNotFound("Id not found " + id);
+		} 	
+    	
+    }
+    
+    
     //Método para setar na base de dados pegando o DTO e convertendo para ENTIDADE
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
         entity.setChildren(dto.getChildren());
