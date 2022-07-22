@@ -52,21 +52,30 @@ public class ClientResource {
                 .toUri();
         return ResponseEntity.created(uri).body(dto);
     }
-    
+
     @PutMapping(value = "/{id}")
     public ResponseEntity<ClientDTO> update(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
-    	clientDTO = clientService.update(id, clientDTO);
-    	
-    	return ResponseEntity.ok().body(clientDTO);
-    }
-    
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-    	clientService.delete(id);
-    	
-    	//resposta 204
-    	return ResponseEntity.noContent().build();
-    	
+        clientDTO = clientService.update(id, clientDTO);
+
+        return ResponseEntity.ok().body(clientDTO);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        clientService.delete(id);
+
+        //resposta 204
+        return ResponseEntity.noContent().build();
+
+    }
+
+    @GetMapping(value = "/cpf")
+    public ResponseEntity<Object> findByCpf(@RequestParam String cpf) {
+        Object clientDTO = clientService.findByCpf(cpf);
+
+        return ResponseEntity.ok().body(clientDTO);
+    }
 }
+
+
+

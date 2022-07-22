@@ -91,7 +91,6 @@ public class ClientService {
 		}
 	}
 
-    
     public void delete(Long id) {
     	try {
     		clientRepository.deleteById(id);
@@ -100,7 +99,26 @@ public class ClientService {
 		} 	
     	
     }
-    
+
+    //Busca por cpf
+    @Transactional(readOnly = true)
+    public Object findByCpf(String cpf) throws ExceptionEntityNotFound {
+        try {
+            List<Client> list = clientRepository.findAll();
+            for (Client listFilter : list) {
+                if (cpf.equals(listFilter.getCpf())) {
+                    Client client = listFilter;
+                    return this.viewBodyEntity(client);
+                }
+            }
+        } catch (ExceptionEntityNotFound e) {
+            throw new ExceptionEntityNotFound("CPF not exists");
+        }
+        return "CPF not exists";
+    }
+
+
+
     
     //Método para setar na base de dados pegando o DTO e convertendo para ENTIDADE
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
@@ -121,6 +139,5 @@ public class ClientService {
                 entity.getBirthDate(),
                 entity.getChildren());
     }
-
 
 }
