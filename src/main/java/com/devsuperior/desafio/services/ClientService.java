@@ -102,16 +102,11 @@ public class ClientService {
 
     //Busca por cpf
     @Transactional(readOnly = true)
-    public Object findByCpf(String cpf) throws ExceptionEntityNotFound {
-            List<Client> list = clientRepository.findAll();
-            Client client = new Client();
-            for (Client listFilter : list) {
-                if (cpf.equals(listFilter.getCpf())) {
-                    client = listFilter;
-                    return this.viewBodyEntity(client);
-                }
-            }
-            return "teste";
+    public ClientDTO findByCpf(String cpf) throws ExceptionEntityNotFound {
+            Optional<Client> client = clientRepository.findByCpf(cpf);
+            Client clientException = client.orElseThrow(() -> new ExceptionEntityNotFound("Entity Not Found"));
+
+            return this.viewBodyEntity(clientException);
         }
 
 

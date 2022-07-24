@@ -70,8 +70,8 @@ public class ClientResource {
     }
 
     @GetMapping(value = "/cpf")
-    public ResponseEntity<Object> findByCpf(@RequestParam String cpf) {
-        Object clientDTO = clientService.findByCpf(cpf);
+    public ResponseEntity<ClientDTO> findByCpf(@RequestParam String cpf) {
+        ClientDTO clientDTO = clientService.findByCpf(cpf);
 
         return ResponseEntity.ok().body(clientDTO);
     }
