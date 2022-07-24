@@ -103,19 +103,16 @@ public class ClientService {
     //Busca por cpf
     @Transactional(readOnly = true)
     public Object findByCpf(String cpf) throws ExceptionEntityNotFound {
-        try {
             List<Client> list = clientRepository.findAll();
+            Client client = new Client();
             for (Client listFilter : list) {
                 if (cpf.equals(listFilter.getCpf())) {
-                    Client client = listFilter;
+                    client = listFilter;
                     return this.viewBodyEntity(client);
                 }
             }
-        } catch (ExceptionEntityNotFound e) {
-            throw new ExceptionEntityNotFound("CPF not exists");
+            return "teste";
         }
-        return "CPF not exists";
-    }
 
 
 
